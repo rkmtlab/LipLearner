@@ -35,7 +35,7 @@ class ItemSelectionViewController: UITableViewController {
         
         self.delegate = delegate
         self.identifier = identifier
-        self.sections = ["Registration language mode", "Review recent recognitions"]
+        self.sections = ["Command registration langauge", "Review recent recognitions"]
         self.conditions = ["English", "日本語", "中文", "Melayu", "français", "español", "Tiếng Việt"]
         self.selectedRow = selectedRow
         self.recentCommands = recentCommands
@@ -119,11 +119,7 @@ class ItemSelectionViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if (section == 1){
-            return self.sections[section]
-        }else{
-            return nil
-        }
+        return self.sections[section]
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {

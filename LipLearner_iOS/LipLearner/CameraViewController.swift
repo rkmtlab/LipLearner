@@ -63,9 +63,10 @@ final class CameraViewController: UIViewController, SFSpeechRecognizerDelegate, 
     private var commandCenterDict = [String: [Float]]()
     private var keywordSpottingBuffer = [UIImage]()
     private var KWSWindowSize: Int = 30
-    private var hopSize = 15
-    private var MODQueue = Queue<Float>.init(maxCapacity: 10)
+    private var hopSize = 10
+    private var MODQueue = Queue<Float>.init(maxCapacity: 15)
     private var MOD = Float.zero
+    private var delayedMOD = Float.zero
     private var KWSDataFrame = DataFrame()
     private var keywordCandidate: [Float]?
     private var keywordSpotting: Bool = false{
@@ -535,6 +536,7 @@ final class CameraViewController: UIViewController, SFSpeechRecognizerDelegate, 
         commandTableView.delegate = self
         commandTableView.frame = CGRect(x:bounds.minX, y:100, width: bounds.width+100, height: bounds.maxY-292)
         commandTableView.register(UITableViewCell.self, forCellReuseIdentifier: "Command Cell")
+        commandTableView.isHidden = true
         view.addSubview(commandTableView)
         
         menuView.frame = CGRect(x:bounds.minX, y:bounds.maxY - 192, width: bounds.width, height: 192)
@@ -567,6 +569,7 @@ final class CameraViewController: UIViewController, SFSpeechRecognizerDelegate, 
                 self.nonSpeakingCount = 0
                 self.keywordCenterVector = [Float]()
                 self.nonSpeakingCenterVector = [Float]()
+                self.KWSClassifier = nil
             }))
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_) in }))
             self.present(alert, animated: true, completion: nil)
@@ -574,10 +577,10 @@ final class CameraViewController: UIViewController, SFSpeechRecognizerDelegate, 
             UIAction(title: "Toggle Camera View", state: .off, handler: { _ in
                 if self.commandTableView.isHidden {
                     self.commandTableView.isHidden = false
-                    self.cameraView.layer.sublayers?.removeLast()
+                    self.previewLayer?.isHidden = true
                 } else {
                     self.commandTableView.isHidden = true
-                    self.cameraView.layer.addSublayer(self.previewLayer!)
+                    self.previewLayer?.isHidden = false
                 }
             })]
         
@@ -753,9 +756,10 @@ final class CameraViewController: UIViewController, SFSpeechRecognizerDelegate, 
             let innerLips = landmarks.innerLips!.normalizedPoints
             let h = CGPointDistance(from: innerLips[1], to: innerLips[4])
             let w = CGPointDistance(from: innerLips[0], to: innerLips[2])
-            self.MODQueue.enqueue(Float((h/w)))
-            if self.MODQueue.currentSize == 25 {
-                self.MOD = self.MODQueue.dequeue()!
+            self.MOD = Float((h/w))
+            self.MODQueue.enqueue(self.MOD)
+            if self.MODQueue.currentSize == 15 {
+                self.delayedMOD  = self.MODQueue.dequeue()!
             }
             guard let minLipX = xArray.min(),
                   let maxLipX = xArray.max(),
@@ -833,7 +837,7 @@ final class CameraViewController: UIViewController, SFSpeechRecognizerDelegate, 
 
             previewLayer.videoGravity = .resizeAspectFill
             previewLayer.frame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height)
-            
+            self.cameraView.layer.addSublayer(previewLayer)
             videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "AVSessionQueue", attributes: []))
             captureSession.addOutput(videoOutput)
             if #available(iOS 16.0, *) {
@@ -972,7 +976,6 @@ final class CameraViewController: UIViewController, SFSpeechRecognizerDelegate, 
             var norm: Float = .nan
             vDSP_svesq(self.keywordCenterVector, 1, &norm, vDSP_Length(500))
             sim *= norm.squareRoot()
-            
             // MARK: Write the similarity log to a txt file
             if sim > self.keywordThreshold{ // otherwise the data is consifered as positive candidates.
                 self.keywordCandidate = keywordVector
@@ -1256,8 +1259,8 @@ extension CameraViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
             self.keywordSpottingBuffer.append(image)
             if self.keywordSpottingBuffer.count == KWSWindowSize { // MARK: KWS window size
                 let keywordSpottingBufferDuplicate = keywordSpottingBuffer.map { $0 }
-                self.keywordSpottingBuffer = Array(self.keywordSpottingBuffer.suffix(self.hopSize)) // MARK: KWS hop length to be shorter
-                if (self.MOD >= 0.1) && (!self.recording) {
+                self.keywordSpottingBuffer = Array(self.keywordSpottingBuffer.suffix(self.KWSWindowSize - self.hopSize)) // MARK: KWS hop length to be shorter
+                if (self.MOD >= 0.1 || self.delayedMOD >= 0.1) && (!self.recording) {
                     DispatchQueue.global(qos: .userInteractive).async {
                         self.keywordDetection(video: keywordSpottingBufferDuplicate)
                     }
