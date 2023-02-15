@@ -1,0 +1,7 @@
+opencv-python==4.5.5.64
+PyTurboJPEG==1.6.6
+scikit-image==0.19.2
+scikit-learn==1.1.2
+scipy==1.9.3
+torch==1.11.0+cu113
+torchvision==0.12.0+cu113
