@@ -69,10 +69,11 @@ def load_missing(model, pretrained_dict):
     print('miss matched params:',missed_params)
     model_dict.update(pretrained_dict)
     model.load_state_dict(model_dict)
-    # freeze parameters in pretrained model
     for name, param in model.named_parameters():
-        if name in pretrained_dict.keys() and "prejection_head" not in name:
-            param.requires_grad = False
+        param.requires_grad = True
+        # only fine tune the projection head if you dont have enough gpu memory
+        # if name in pretrained_dict.keys() and "prejection_head" not in name:
+        #     param.requires_grad = False
     return model
     
 
