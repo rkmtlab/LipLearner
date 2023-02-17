@@ -72,8 +72,8 @@ def load_missing(model, pretrained_dict):
     for name, param in model.named_parameters():
         param.requires_grad = True
         # only fine tune the projection head if you dont have enough gpu memory
-        # if name in pretrained_dict.keys() and "prejection_head" not in name:
-        #     param.requires_grad = False
+        if name in pretrained_dict.keys() and "prejection_head" not in name:
+            param.requires_grad = False
     return model
     
 
