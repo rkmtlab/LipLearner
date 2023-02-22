@@ -47,7 +47,6 @@ final class CameraViewController: UIViewController, SFSpeechRecognizerDelegate, 
     private var captureDevice: AVCaptureDevice?
     private var captureDeviceResolution: CGSize = CGSize(width: 1080, height: 1920)
     private let videoOutput = AVCaptureVideoDataOutput()
-    private let context = CIContext(options: nil)
     
     private var detectionOverlayLayer: CALayer?
     private var detectedFaceRectangleShapeLayer: CAShapeLayer?
@@ -96,10 +95,10 @@ final class CameraViewController: UIViewController, SFSpeechRecognizerDelegate, 
     private let lipreadingModel = try! LipEncoder()
     private var keywordCenterVector = [Float]()
     private var keywordCount: Float = 0
-    private var keywordThreshold: Float = 0.6 // Reduce this threshold to increase the sensitivity to the keyword.
+    private var keywordThreshold: Float = 0.7 // Reduce this threshold to increase the sensitivity to the keyword.
     private var nonSpeakingCenterVector = [Float]()
     private var nonSpeakingCount: Float = 0
-    private var nonSpeakingThreshold: Float = 0.6 // Reduce this threshold to increase the sensitivity to the end of the speech (EOS).
+    private var nonSpeakingThreshold: Float = 0.65 // Reduce this threshold to increase the sensitivity to the end of the speech (EOS).
     
     // speech recognition related
     private var speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))!
@@ -976,6 +975,7 @@ final class CameraViewController: UIViewController, SFSpeechRecognizerDelegate, 
             var norm: Float = .nan
             vDSP_svesq(self.keywordCenterVector, 1, &norm, vDSP_Length(500))
             sim *= norm.squareRoot()
+            print(sim)
             // MARK: Write the similarity log to a txt file
             if sim > self.keywordThreshold{ // otherwise the data is consifered as positive candidates.
                 self.keywordCandidate = keywordVector
@@ -1252,9 +1252,14 @@ extension CameraViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
             }
         }
         
-        let sourceImage = CIImage(cvImageBuffer: pixelBuffer, options: nil).transformed(by: CGAffineTransform(rotationAngle: .pi/2)) // sourceImage.extent.size : (360.0, 480.0) previewlayer: w = 414, 604, offsety = 100
-        guard let tempImage = self.context.createCGImage(sourceImage, from: sourceImage.extent) else { return }
-        let image = UIImage(cgImage: tempImage.cropping(to: self.lipCenteredFaceBounds)!, scale:1.0, orientation: .down)
+        let sourceImage = CIImage(cvImageBuffer: pixelBuffer, options: nil)
+        let transform = sourceImage.orientationTransform(for: .leftMirrored).inverted()
+        let transformedBounds = self.lipCenteredFaceBounds.applying(transform)
+        let croppedImage = sourceImage.cropped(to: transformedBounds)
+        let context = CIContext()
+        guard let tempImage = context.createCGImage(croppedImage, from: croppedImage.extent) else { return }
+        let image = UIImage(cgImage: tempImage, scale:1.0, orientation: .leftMirrored)
+        
         if self.keywordSpotting{
             self.keywordSpottingBuffer.append(image)
             if self.keywordSpottingBuffer.count == KWSWindowSize { // MARK: KWS window size
