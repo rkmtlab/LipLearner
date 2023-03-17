@@ -95,7 +95,7 @@ final class CameraViewController: UIViewController, SFSpeechRecognizerDelegate, 
     private let lipreadingModel = try! LipEncoder()
     private var keywordCenterVector = [Float]()
     private var keywordCount: Float = 0
-    private var keywordThreshold: Float = 0.7 // Reduce this threshold to increase the sensitivity to the keyword.
+    private var keywordThreshold: Float = 0.65 // Reduce this threshold to increase the sensitivity to the keyword.
     private var nonSpeakingCenterVector = [Float]()
     private var nonSpeakingCount: Float = 0
     private var nonSpeakingThreshold: Float = 0.65 // Reduce this threshold to increase the sensitivity to the end of the speech (EOS).
