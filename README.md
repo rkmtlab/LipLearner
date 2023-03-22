@@ -54,7 +54,7 @@ Processed data will be saved in the `lrw_roi_63_99_191_227_size128_npy_gray_pkl_
 
 ### Pretrain Weights
 
-We provide pretrained weights [here (Google Drive)](https://drive.google.com/drive/folders/xxx.xxx).
+We provide pretrained weights [here (Google Drive)](https://drive.google.com/file/d/1RK7no1QH8QFZzjVrmg64X8wuCLRfJzu3/view?usp=share_link).
 
 ### How to train
 ```
