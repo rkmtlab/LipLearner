@@ -889,7 +889,7 @@ final class CameraViewController: UIViewController, SFSpeechRecognizerDelegate, 
             if let result = result {
                 // Update the text view with the results.
                 self.recognizedText = result.bestTranscription.formattedString
-                self.commandLabel.text = result.bestTranscription.formattedString
+//                self.commandLabel.text = result.bestTranscription.formattedString
                 isFinal = result.isFinal
             }
             
@@ -988,6 +988,7 @@ final class CameraViewController: UIViewController, SFSpeechRecognizerDelegate, 
                     feedbackGenerator.impactOccurred()
                     self.recordButton.tintColor = .red
                     self.recordButton.setTitle("Recording", for: .normal)
+                    self.commandLabel.text = ""
                     self.recording = true
                 }
                 if (self.currentWorkMode == .registeration) && (self.currentRecordMode == .command) {
