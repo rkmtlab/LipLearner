@@ -1,6 +1,6 @@
 
 # LipLearner: Customizable Silent Speech Interactions on Mobile Devices
-![Teaser](./src/teaser_v2.png "Example Interaction of LipLearner")
+![Teaser](./src/teaser_v2.jpg "Example Interaction of LipLearner")
 This is the repository for **LipLearner: Customizable Silent Speech Interactions on Mobile Devices** (CHI 2023). It contains PyTorch scripts for contrastive pre-training and the source code of the iOS application. Please refer to our paper for more details. 
 [arXiv preprint](https://arxiv.org/abs/2302.05907) 
 [ACM Digital Library](https://doi.org/10.1145/3544548.3581465)
@@ -18,7 +18,7 @@ This is the repository for **LipLearner: Customizable Silent Speech Interactions
 - [License](#license)
 
 # Learn Visual Speech Representations with Contrastive Learning
-![pretraining](src/contrastive_learning.png)
+![pretraining](src/contrastive_learning.jpg)
 The `prtraining` folder contains the contrastive pretraining scripts based on Feng et al.'s 3D convolutional neural networks. We use the public lipreading dataset [LRW](http://www.robots.ox.ac.uk/~vgg/data/lip_reading/lrw1.html) to learn efficient visual speech representations, which serve as the cornerstone our few-shot learning silent speech command customization framework.
 
 
@@ -69,7 +69,7 @@ More training details and settings can be found in [our paper](https://arxiv.org
 
 We developed an iOS application that allows people to experience silent speech interaction on commodity smartphones. This application provides totally real-time and on-device lipreading, a visual keyword spotting system for hands-free activation, and an online incremental learning scheme that learns continously during use. The following diagram explains how it works:
 
-![UI design](src/UIdesign.png)
+![UI design](src/UIdesign.jpg)
 *User experience and interface design. (A) The interface of the initialization phase. The user first needs to record keyword and non-speaking samples to enable KWS activation. (B) The user says a command aloud for command registration. The voice signal will be leveraged to label the silent speech, allowing fast command registration (Voice2Lip). (C) The interface for querying the right label in the active learning mode. Users can slide through the existing commands sorted by similarity to select and add a new sample to the model. Users can update the model at any time by using the button at the upper-right corner, which usually takes around 2 seconds on iPhone. (D) An example showing the command "play some music" is recognized correctly and executed successfully by the pre-set shortcut. (E) The interface for correcting the predictions in on-demand learning mode. The user can review recent utterances displayed as a GIF animation*
 
 To get started, download the Xcode project from the `LipLearner` folder. The Core ML format lipreading encoder model has been compressed into a .tar.gz file to avoid exceeding the file size limit on Github. So you will need to extract the weights on your computer before building the iOS App.
