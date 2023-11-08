@@ -93,13 +93,24 @@ We will provide a tutorial video to help you get started in the furture.
 If you find this codebase useful for your research, please consider to cite our CHI 2023 paper and Feng's papers:
 
 ```
-@inproceedings{su2023liplearner,
-  title={LipLearner: Customizable Silent Speech Interactions on Mobile Devices},
-  author={Su, Zixiong and Fang, Shitao and Rekimoto, Jun},
-  booktitle={Proceedings of the 2023 CHI Conference on Human Factors in Computing Systems},
-  pages={1--21},
-  year={2023}
+@inproceedings{10.1145/3544548.3581465,
+author = {Su, Zixiong and Fang, Shitao and Rekimoto, Jun},
+title = {LipLearner: Customizable Silent Speech Interactions on Mobile Devices},
+year = {2023},
+isbn = {9781450394215},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3544548.3581465},
+doi = {10.1145/3544548.3581465},
+booktitle = {Proceedings of the 2023 CHI Conference on Human Factors in Computing Systems},
+articleno = {696},
+numpages = {21},
+keywords = {Customization, Lipreading, Few-shot Learning, Silent Speech Interface},
+location = {Hamburg, Germany},
+series = {CHI '23}
 }
+
+
 
 @inproceedings{feng2021efficient,
   title={An Efficient Software for Building LIP Reading Models Without Pains},
