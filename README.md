@@ -93,10 +93,11 @@ We will provide a tutorial video to help you get started in the furture.
 If you find this codebase useful for your research, please consider to cite our CHI 2023 paper and Feng's papers:
 
 ```
-@article{su2023liplearner,
+@inproceedings{su2023liplearner,
   title={LipLearner: Customizable Silent Speech Interactions on Mobile Devices},
   author={Su, Zixiong and Fang, Shitao and Rekimoto, Jun},
-  journal={arXiv preprint arXiv:2302.05907},
+  booktitle={Proceedings of the 2023 CHI Conference on Human Factors in Computing Systems},
+  pages={1--21},
   year={2023}
 }
 
